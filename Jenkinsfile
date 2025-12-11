@@ -53,8 +53,10 @@ pipeline {
 
         stage('Docker Push') {
             steps {
-		docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-		    sh "docker push $IMAGE_NAME:$TAG"
+ 		script {
+		    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+		        sh "docker push $IMAGE_NAME:$TAG"
+		    }
 		}
             }
         }
