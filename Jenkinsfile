@@ -11,13 +11,14 @@ pipeline {
 
     stages {
 
+/*
 	stage('Checkout SCM') {
             steps {
 		echo 'Cloning repository...'
 		git branch: 'main', url: 'https://github.com/Mandy943/cinesense-frontend.git'
-                //checkout scm
             }
         }
+*/
 
 	stage('Check Tools') {
 	    steps {
@@ -62,15 +63,23 @@ pipeline {
         }
 
         stage('Deploy via Ansible') {
-            steps {
-		echo "Have to deploy via Ansible"
+	    script {
+                echo "Deploying frontend via Ansible..."
+
+                // Run the ansible playbook locally on the Jenkins agent
+                sh """
+                    ansible-playbook ansible/frontend-deployment.yml \
+                    -i localhost, \
+                    --connection=local \
+                    --extra-vars "image=${IMAGE_NAME}:${TAG} namespace=frontend"
+                """
             }
         }
     }
 
     post {
         success {
-            echo "Pipeline completed: ${REGISTRY}/${IMAGE_NAME}:${TAG}"
+            echo "Pipeline completed: ${IMAGE_NAME}:${TAG}"
         }
         failure {
             echo 'Pipeline failed'
