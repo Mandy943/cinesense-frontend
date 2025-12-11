@@ -13,13 +13,15 @@ pipeline {
 
 	stage('Checkout SCM') {
             steps {
-                checkout scm
+		echo 'Cloning repository...'
+		git branch: 'main', url: 'https://github.com/Mandy943/cinesense-frontend.git'
+                //checkout scm
             }
         }
 
 	stage('Check Tools') {
 	    steps {
-	        echo 'Checking Docker and Maven versions...'
+	        echo 'Checking Docker version...'
 		sh '''
 		    docker --version
 		'''
@@ -52,7 +54,7 @@ pipeline {
         stage('Docker Push') {
             steps {
 		docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-		    sh "docker push $IMAGE_NAME:$IMAGE_TAG"
+		    sh "docker push $IMAGE_NAME:$TAG"
 		}
             }
         }
